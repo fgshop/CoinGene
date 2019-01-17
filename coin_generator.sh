@@ -364,10 +364,10 @@ esac
 #     exit 1
 # fi
 
-if ! which git &>/dev/null; then
-    echo Please install git first
-    exit 1
-fi
+# if ! which git &>/dev/null; then
+#     echo Please install git first
+#     exit 1
+# fi
 
 case $1 in
     stop)
