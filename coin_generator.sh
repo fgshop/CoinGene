@@ -64,17 +64,15 @@ update_dependencies_source()
 {
     echo Update apt-get
 
-    sudo add-apt-repository ppa:bitcoin/bitcoin
-    sudo apt-get update
-    sudo apt-get install libdb4.8-dev libdb4.8++-dev
-    sudo apt-get install libboost-all-dev libzmq3-dev libminiupnpc-dev
-    sudo apt-get install curl git build-essential libtool autotools-dev
-    sudo apt-get install automake pkg-config bsdmainutils python3
-    sudo apt-get install software-properties-commen libssl-dev libevent-dev
+    # sudo add-apt-repository ppa:bitcoin/bitcoin
+    # sudo apt-get update
+    # sudo apt-get install libdb4.8-dev libdb4.8++-dev
+    # sudo apt-get install libboost-all-dev libzmq3-dev libminiupnpc-dev
+    # sudo apt-get install curl git build-essential libtool autotools-dev
+    # sudo apt-get install automake pkg-config bsdmainutils python3
+    # sudo apt-get install software-properties-commen libssl-dev libevent-dev
 
-    mkdir -p $COIN_NAME_LOWER
     git clone https://github.com/litecoin-project/litecoin.git $COIN_NAME_LOWER
-    cd $COIN_NAME_LOWER
 
     echo Finished clone litecoin to $COIN_NAME_LOWER!
 }
@@ -393,10 +391,10 @@ case $1 in
         done
     ;;
     start)
-        if [ -n "$(docker ps -q -f ancestor=$DOCKER_IMAGE_LABEL)" ]; then
-            echo "There are nodes running. Please stop them first with: $0 stop"
-            exit 1
-        fi
+        # if [ -n "$(docker ps -q -f ancestor=$DOCKER_IMAGE_LABEL)" ]; then
+        #     echo "There are nodes running. Please stop them first with: $0 stop"
+        #     exit 1
+        # fi
         # docker_build_image
         update_dependencies_source
         generate_genesis_block
