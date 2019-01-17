@@ -59,27 +59,25 @@ DIRNAME=$(dirname $0)
 # DOCKER_IMAGE_LABEL="newcoin-env"
 OSVERSION="$(uname -s)"
 
-echo Update apt-get
 
-sudo add-apt-repository ppa:bitcoin/bitcoin
-sudo apt-get update
-sudo apt-get install libdb4.8-dev libdb4.8++-dev
-sudo apt-get install libboost-all-dev libzmq3-dev libminiupnpc-dev
-sudo apt-get install curl git build-essential libtool autotools-dev
-sudo apt-get install automake pkg-config bsdmainutils python3
-sudo apt-get install software-properties-commen libssl-dev libevent-dev
+update_dependencies_source()
+{
+    echo Update apt-get
 
-mkdir -p $COIN_NAME_LOWER
-git clone https://github.com/litecoin-project/litecoin.git $COIN_NAME_LOWER
-cd $COIN_NAME_LOWER
+    sudo add-apt-repository ppa:bitcoin/bitcoin
+    sudo apt-get update
+    sudo apt-get install libdb4.8-dev libdb4.8++-dev
+    sudo apt-get install libboost-all-dev libzmq3-dev libminiupnpc-dev
+    sudo apt-get install curl git build-essential libtool autotools-dev
+    sudo apt-get install automake pkg-config bsdmainutils python3
+    sudo apt-get install software-properties-commen libssl-dev libevent-dev
 
-echo Finished clone litecoin to $COIN_NAME_LOWER!
+    mkdir -p $COIN_NAME_LOWER
+    git clone https://github.com/litecoin-project/litecoin.git $COIN_NAME_LOWER
+    cd $COIN_NAME_LOWER
 
-generate_genesis_block
-newcoin_replace_vars
-build_new_coin
-
-
+    echo Finished clone litecoin to $COIN_NAME_LOWER!
+}
 
 docker_build_image()
 {
@@ -361,10 +359,10 @@ case $OSVERSION in
 esac
 
 
-if ! which docker &>/dev/null; then
-    echo Please install docker first
-    exit 1
-fi
+# if ! which docker &>/dev/null; then
+#     echo Please install docker first
+#     exit 1
+# fi
 
 if ! which git &>/dev/null; then
     echo Please install git first
@@ -399,22 +397,23 @@ case $1 in
             echo "There are nodes running. Please stop them first with: $0 stop"
             exit 1
         fi
-        docker_build_image
+        # docker_build_image
+        update_dependencies_source
         generate_genesis_block
         newcoin_replace_vars
         build_new_coin
-        docker_create_network
+        # docker_create_network
 
-        docker_run_node 2 "cd /$COIN_NAME_LOWER ; ./src/${COIN_NAME_LOWER}d $CHAIN -listen -noconnect -bind=$DOCKER_NETWORK.2 -addnode=$DOCKER_NETWORK.1 -addnode=$DOCKER_NETWORK.3 -addnode=$DOCKER_NETWORK.4 -addnode=$DOCKER_NETWORK.5" &
-        docker_run_node 3 "cd /$COIN_NAME_LOWER ; ./src/${COIN_NAME_LOWER}d $CHAIN -listen -noconnect -bind=$DOCKER_NETWORK.3 -addnode=$DOCKER_NETWORK.1 -addnode=$DOCKER_NETWORK.2 -addnode=$DOCKER_NETWORK.4 -addnode=$DOCKER_NETWORK.5" &
-        docker_run_node 4 "cd /$COIN_NAME_LOWER ; ./src/${COIN_NAME_LOWER}d $CHAIN -listen -noconnect -bind=$DOCKER_NETWORK.4 -addnode=$DOCKER_NETWORK.1 -addnode=$DOCKER_NETWORK.2 -addnode=$DOCKER_NETWORK.3 -addnode=$DOCKER_NETWORK.5" &
-        docker_run_node 5 "cd /$COIN_NAME_LOWER ; ./src/${COIN_NAME_LOWER}d $CHAIN -listen -noconnect -bind=$DOCKER_NETWORK.5 -addnode=$DOCKER_NETWORK.1 -addnode=$DOCKER_NETWORK.2 -addnode=$DOCKER_NETWORK.3 -addnode=$DOCKER_NETWORK.4" &
+#         docker_run_node 2 "cd /$COIN_NAME_LOWER ; ./src/${COIN_NAME_LOWER}d $CHAIN -listen -noconnect -bind=$DOCKER_NETWORK.2 -addnode=$DOCKER_NETWORK.1 -addnode=$DOCKER_NETWORK.3 -addnode=$DOCKER_NETWORK.4 -addnode=$DOCKER_NETWORK.5" &
+#         docker_run_node 3 "cd /$COIN_NAME_LOWER ; ./src/${COIN_NAME_LOWER}d $CHAIN -listen -noconnect -bind=$DOCKER_NETWORK.3 -addnode=$DOCKER_NETWORK.1 -addnode=$DOCKER_NETWORK.2 -addnode=$DOCKER_NETWORK.4 -addnode=$DOCKER_NETWORK.5" &
+#         docker_run_node 4 "cd /$COIN_NAME_LOWER ; ./src/${COIN_NAME_LOWER}d $CHAIN -listen -noconnect -bind=$DOCKER_NETWORK.4 -addnode=$DOCKER_NETWORK.1 -addnode=$DOCKER_NETWORK.2 -addnode=$DOCKER_NETWORK.3 -addnode=$DOCKER_NETWORK.5" &
+#         docker_run_node 5 "cd /$COIN_NAME_LOWER ; ./src/${COIN_NAME_LOWER}d $CHAIN -listen -noconnect -bind=$DOCKER_NETWORK.5 -addnode=$DOCKER_NETWORK.1 -addnode=$DOCKER_NETWORK.2 -addnode=$DOCKER_NETWORK.3 -addnode=$DOCKER_NETWORK.4" &
 
-        echo "Docker containers should be up and running now. You may run the following command to check the network status:
-for i in \$(docker ps -q); do docker exec \$i /$COIN_NAME_LOWER/src/${COIN_NAME_LOWER}-cli $CHAIN getblockchaininfo; done"
-        echo "To ask the nodes to mine some blocks simply run:
-for i in \$(docker ps -q); do docker exec \$i /$COIN_NAME_LOWER/src/${COIN_NAME_LOWER}-cli $CHAIN generate 2  & done"
-        exit 1
+#         echo "Docker containers should be up and running now. You may run the following command to check the network status:
+# for i in \$(docker ps -q); do docker exec \$i /$COIN_NAME_LOWER/src/${COIN_NAME_LOWER}-cli $CHAIN getblockchaininfo; done"
+#         echo "To ask the nodes to mine some blocks simply run:
+# for i in \$(docker ps -q); do docker exec \$i /$COIN_NAME_LOWER/src/${COIN_NAME_LOWER}-cli $CHAIN generate 2  & done"
+#         exit 1
     ;;
     *)
         cat <<EOF
