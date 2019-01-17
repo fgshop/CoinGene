@@ -71,6 +71,9 @@ update_dependencies_source()
     # sudo apt-get install curl git build-essential libtool autotools-dev
     # sudo apt-get install automake pkg-config bsdmainutils python3
     # sudo apt-get install software-properties-commen libssl-dev libevent-dev
+    # sudo apt install python-pip
+    # pip install scrypt
+    # pip install construct
 
     #git clone https://github.com/litecoin-project/litecoin.git
 
@@ -111,37 +114,37 @@ docker_run()
     docker run -v $DIRNAME/GenesisH0:/GenesisH0 -v $DIRNAME/.ccache:/root/.ccache -v $DIRNAME/$COIN_NAME_LOWER:/$COIN_NAME_LOWER $DOCKER_IMAGE_LABEL /bin/bash -c "$1"
 }
 
-docker_stop_nodes()
+stop_nodes()
 {
-    echo "Stopping all docker nodes"
-    for id in $(docker ps -q -a  -f ancestor=$DOCKER_IMAGE_LABEL); do
-        docker stop $id
+    echo "Stopping $COIN_NAME_LOWER daemon"
+    for id in $(ps -ef | grep $COIN_NAME_LOWER); do
+        kill -9 $id
     done
 }
 
-docker_remove_nodes()
+remove_nodes()
 {
-    echo "Removing all docker nodes"
-    for id in $(docker ps -q -a  -f ancestor=$DOCKER_IMAGE_LABEL); do
-        docker rm $id
+    echo "Removing $COIN_NAME_LOWER nodes"
+    for id in $(ps -ef | grep $COIN_NAME_LOWER); do
+        kill -9 $id
     done
 }
 
-docker_create_network()
+create_network()
 {
-    echo "Creating docker network"
+    echo "Creating $COIN_NAME_LOWER network"
     if ! docker network inspect newcoin &>/dev/null; then
         docker network create --subnet=$DOCKER_NETWORK.0/16 newcoin
     fi
 }
 
-docker_remove_network()
+remove_network()
 {
-    echo "Removing docker network"
-    docker network rm newcoin
+    echo "Removing $COIN_NAME_LOWER network"
+    rm -rf $COIN_NAME_LOWER
 }
 
-docker_run_node()
+run_node()
 {
     local NODE_NUMBER=$1
     local NODE_COMMAND=$2
@@ -152,8 +155,8 @@ rpcuser=${COIN_NAME_LOWER}rpc
 rpcpassword=$(cat /dev/urandom | env LC_CTYPE=C tr -dc a-zA-Z0-9 | head -c 32; echo)
 EOF
     fi
-
-    # docker run --net newcoin --ip $DOCKER_NETWORK.${NODE_NUMBER} -v $DIRNAME/miner${NODE_NUMBER}:/root/.$COIN_NAME_LOWER -v $DIRNAME/$COIN_NAME_LOWER:/$COIN_NAME_LOWER $DOCKER_IMAGE_LABEL /bin/bash -c "$NODE_COMMAND"
+    cd $DIRNAME/miner${NODE_NUMBER}
+    # sh mined${NODE_NUMBER}.sh
 }
 
 generate_genesis_block()
@@ -401,23 +404,15 @@ case $1 in
         #     echo "There are nodes running. Please stop them first with: $0 stop"
         #     exit 1
         # fi
-        # docker_build_image
+        # build_image
         update_dependencies_source
         generate_genesis_block
         newcoin_replace_vars
         build_new_coin
-        # docker_create_network
+        # reate_network
 
-#         docker_run_node 2 "cd /$COIN_NAME_LOWER ; ./src/${COIN_NAME_LOWER}d $CHAIN -listen -noconnect -bind=$DOCKER_NETWORK.2 -addnode=$DOCKER_NETWORK.1 -addnode=$DOCKER_NETWORK.3 -addnode=$DOCKER_NETWORK.4 -addnode=$DOCKER_NETWORK.5" &
-#         docker_run_node 3 "cd /$COIN_NAME_LOWER ; ./src/${COIN_NAME_LOWER}d $CHAIN -listen -noconnect -bind=$DOCKER_NETWORK.3 -addnode=$DOCKER_NETWORK.1 -addnode=$DOCKER_NETWORK.2 -addnode=$DOCKER_NETWORK.4 -addnode=$DOCKER_NETWORK.5" &
-#         docker_run_node 4 "cd /$COIN_NAME_LOWER ; ./src/${COIN_NAME_LOWER}d $CHAIN -listen -noconnect -bind=$DOCKER_NETWORK.4 -addnode=$DOCKER_NETWORK.1 -addnode=$DOCKER_NETWORK.2 -addnode=$DOCKER_NETWORK.3 -addnode=$DOCKER_NETWORK.5" &
-#         docker_run_node 5 "cd /$COIN_NAME_LOWER ; ./src/${COIN_NAME_LOWER}d $CHAIN -listen -noconnect -bind=$DOCKER_NETWORK.5 -addnode=$DOCKER_NETWORK.1 -addnode=$DOCKER_NETWORK.2 -addnode=$DOCKER_NETWORK.3 -addnode=$DOCKER_NETWORK.4" &
-
-#         echo "Docker containers should be up and running now. You may run the following command to check the network status:
-# for i in \$(docker ps -q); do docker exec \$i /$COIN_NAME_LOWER/src/${COIN_NAME_LOWER}-cli $CHAIN getblockchaininfo; done"
-#         echo "To ask the nodes to mine some blocks simply run:
-# for i in \$(docker ps -q); do docker exec \$i /$COIN_NAME_LOWER/src/${COIN_NAME_LOWER}-cli $CHAIN generate 2  & done"
-#         exit 1
+        $COIN_NAME_LOWER/src/${COIN_NAME_LOWER}-cli $CHAIN getblockchaininfo
+        $COIN_NAME_LOWER/src/${COIN_NAME_LOWER}-cli $CHAIN generate 2
     ;;
     *)
         cat <<EOF
