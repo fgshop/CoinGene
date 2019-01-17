@@ -160,9 +160,9 @@ generate_genesis_block()
 {
     if [ ! -d GenesisH0 ]; then
         git clone $GENESISHZERO_REPOS
-        pushd GenesisH0
+        cd GenesisH0
     else
-        pushd GenesisH0
+        cd GenesisH0
         git pull
     fi
 
@@ -203,7 +203,7 @@ generate_genesis_block()
     TEST_GENESIS_HASH=$(cat ${COIN_NAME}-test.txt | grep "^genesis hash:" | $SED 's/^genesis hash: //')
     REGTEST_GENESIS_HASH=$(cat ${COIN_NAME}-regtest.txt | grep "^genesis hash:" | $SED 's/^genesis hash: //')
 
-    popd
+    cd ..
 }
 
 newcoin_replace_vars()
@@ -217,14 +217,14 @@ newcoin_replace_vars()
         git clone -b $LITECOIN_BRANCH $LITECOIN_REPOS litecoin-master
     else
         echo "Updating master branch"
-        pushd litecoin-master
+        cd litecoin-master
         git pull
-        popd
+        cd ..
     fi
 
     git clone -b $LITECOIN_BRANCH litecoin-master $COIN_NAME_LOWER
 
-    pushd $COIN_NAME_LOWER
+    cd $COIN_NAME_LOWER
 
     # first rename all directories
     for i in $(find . -type d | grep -v "^./.git" | grep litecoin); do 
@@ -315,7 +315,7 @@ newcoin_replace_vars()
     $SED -i "s/0x1efb29c8187d5a496a33377941d1df415169c3ce5d8c05d055f25b683ec3f9a3/0x$TEST_GENESIS_HASH/" src/chainparams.cpp
 
     # TODO: fix checkpoints
-    popd
+    cd ..
 }
 
 build_new_coin()
