@@ -327,7 +327,7 @@ build_new_coin()
         bash ./configure --disable-tests --disable-bench
     fi
     # always build as the user could have manually changed some files
-    make -f makefile.am USE_UPNP=-
+    $COIN_NAME_LOWER/make -f makefile.am USE_UPNP=-
 }
 
 
