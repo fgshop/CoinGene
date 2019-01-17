@@ -322,11 +322,14 @@ build_new_coin()
 {
     # only run autogen.sh/configure if not done previously
     if [ ! -e $COIN_NAME_LOWER/Makefile ]; then
-        docker_run "cd /$COIN_NAME_LOWER ; bash  /$COIN_NAME_LOWER/autogen.sh"
-        docker_run "cd /$COIN_NAME_LOWER ; bash  /$COIN_NAME_LOWER/configure --disable-tests --disable-bench"
+        cd $COIN_NAME_LOWER
+        bash $COIN_NAME_LOWER/autogen.sh
+        cd $COIN_NAME_LOWER
+        bash $COIN_NAME_LOWER/configure --disable-tests --disable-bench
     fi
     # always build as the user could have manually changed some files
-    docker_run "cd /$COIN_NAME_LOWER ; make -j2"
+    cd $COIN_NAME_LOWER
+    make -j2
 }
 
 
