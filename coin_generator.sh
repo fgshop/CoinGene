@@ -378,19 +378,19 @@ esac
 
 case $1 in
     stop)
-        docker_stop_nodes
+        stop_nodes
     ;;
     remove_nodes)
-        docker_stop_nodes
-        docker_remove_nodes
+        stop_nodes
+        remove_nodes
     ;;
     clean_up)
-        docker_stop_nodes
+        stop_nodes
         for i in $(seq 2 5); do
-           docker_run_node $i "rm -rf /$COIN_NAME_LOWER /root/.$COIN_NAME_LOWER" &>/dev/null
+           rm -rf /$COIN_NAME_LOWER /root/.$COIN_NAME_LOWER &>/dev/null
         done
-        docker_remove_nodes
-        docker_remove_network
+        remove_nodes
+        remove_network
         rm -rf $COIN_NAME_LOWER
         if [ "$2" != "keep_genesis_block" ]; then
             rm -f GenesisH0/${COIN_NAME}-*.txt
