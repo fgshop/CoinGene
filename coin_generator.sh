@@ -419,9 +419,9 @@ case $1 in
         cat <<EOF
 Usage: $0 (start|stop|remove_nodes|clean_up)
  - start: bootstrap environment, build and run your new coin
- - stop: simply stop the containers without removing them
- - remove_nodes: remove the old docker container images. This will stop them first if necessary.
- - clean_up: WARNING: this will stop and remove docker containers and network, source code, genesis block information and nodes data directory. (to start from scratch)
+ - stop: simply stop the daemon without removing them
+ - remove_nodes: remove the old data. This will stop them first if necessary.
+ - clean_up: WARNING: this will stop and remove newcoin and network, source code, genesis block information and nodes data directory. (to start from scratch)
 EOF
     ;;
 esac
