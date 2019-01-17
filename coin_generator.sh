@@ -72,9 +72,9 @@ update_dependencies_source()
     # sudo apt-get install automake pkg-config bsdmainutils python3
     # sudo apt-get install software-properties-commen libssl-dev libevent-dev
 
-    git clone https://github.com/litecoin-project/litecoin.git
+    #git clone https://github.com/litecoin-project/litecoin.git
 
-    echo Finished clone litecoin!
+    echo Finished Update!
 }
 
 docker_build_image()
