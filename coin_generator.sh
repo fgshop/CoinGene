@@ -396,7 +396,7 @@ case $1 in
         #     exit 1
         # fi
         # docker_build_image
-        update_dependencies_source
+        # update_dependencies_source
         generate_genesis_block
         newcoin_replace_vars
         build_new_coin
