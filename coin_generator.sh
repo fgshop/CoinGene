@@ -153,7 +153,7 @@ rpcpassword=$(cat /dev/urandom | env LC_CTYPE=C tr -dc a-zA-Z0-9 | head -c 32; e
 EOF
     fi
 
-    docker run --net newcoin --ip $DOCKER_NETWORK.${NODE_NUMBER} -v $DIRNAME/miner${NODE_NUMBER}:/root/.$COIN_NAME_LOWER -v $DIRNAME/$COIN_NAME_LOWER:/$COIN_NAME_LOWER $DOCKER_IMAGE_LABEL /bin/bash -c "$NODE_COMMAND"
+    # docker run --net newcoin --ip $DOCKER_NETWORK.${NODE_NUMBER} -v $DIRNAME/miner${NODE_NUMBER}:/root/.$COIN_NAME_LOWER -v $DIRNAME/$COIN_NAME_LOWER:/$COIN_NAME_LOWER $DOCKER_IMAGE_LABEL /bin/bash -c "$NODE_COMMAND"
 }
 
 generate_genesis_block()
@@ -322,13 +322,11 @@ build_new_coin()
 {
     # only run autogen.sh/configure if not done previously
     if [ ! -e $COIN_NAME_LOWER/Makefile ]; then
-        cd $COIN_NAME_LOWER
-        bash $COIN_NAME_LOWER/autogen.sh
-        cd $COIN_NAME_LOWER
-        bash $COIN_NAME_LOWER/configure --disable-tests --disable-bench
+        cd ./$COIN_NAME_LOWER
+        bash ./autogen.sh
+        bash ./configure --disable-tests --disable-bench
     fi
     # always build as the user could have manually changed some files
-    cd $COIN_NAME_LOWER
     make -j2
 }
 
