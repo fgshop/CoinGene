@@ -323,11 +323,16 @@ build_new_coin()
     # only run autogen.sh/configure if not done previously
     if [ ! -e $COIN_NAME_LOWER/Makefile ]; then
         cd ./$COIN_NAME_LOWER
+        echo "autogen.sh"
         bash ./autogen.sh
+        echo "configure"
         bash ./configure --disable-tests --disable-bench
     fi
     # always build as the user could have manually changed some files
-    make -f makefile.am USE_UPNP=-
+    echo "make"
+    make
+    echo "make install"
+    make install
 }
 
 
